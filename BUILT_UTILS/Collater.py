@@ -15,14 +15,12 @@ def find_unique_py_files(start_dir, exclude_folders=None):
 
     py_files = {}
     for root, dirs, files in os.walk(start_dir):
-        # Remove excluded folders from dirs list to prevent recursing into them
         dirs[:] = [d for d in dirs if d not in exclude_folders]
 
         for file in files:
             if file.endswith('.py'):
                 file_name = os.path.basename(file)  # Get just the file name
                 file_path = os.path.join(root, file)
-                # Keep './' prefixed version if it exists, otherwise take any
                 if file_name not in py_files or file_path.startswith('./'):
                     py_files[file_name] = file_path
     return list(py_files.values())
@@ -44,20 +42,16 @@ def write_files_to_text(py_files, output_file):
 
 
 if __name__ == "__main__":
-    # Replace '.' with the path of the directory you want to search in
-    start_directory = '.'
-    output_text_file = 'Agents.txt'
+    start_directory = '..'
+    output_text_file = 'utils.txt'
 
-    # Specify folders to exclude
-    folders_to_exclude = ['venv', '__pycache__', '.git', 'ThreadFactory', 'SPECIALITY', 'ProjectFriday.egg-info']  # Add your folders here
+    folders_to_exclude = ['venv', '__pycache__', '.git', 'ThreadFactory', 'SPECIALITY', 'project_utils.egg-info', '.venv']
 
-    # Find all unique Python files, excluding specified folders
     unique_python_files = find_unique_py_files(start_directory, folders_to_exclude)
 
     for item in unique_python_files:
         print(item)
 
-    # Write the contents of all unique Python files into a single text file
     write_files_to_text(unique_python_files, output_text_file)
 
     print(f"All unique Python files have been written to {output_text_file}.")
