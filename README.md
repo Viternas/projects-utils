@@ -18,6 +18,7 @@ pip install ./project-utils
 ## Config.py creation
 ```bazaar
 python3 CreateConfig.py
+#or just run the file
 ```
 
 ## Quick Start
