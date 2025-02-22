@@ -2,7 +2,7 @@ from loguru import logger
 from typing import Optional
 import os
 
-from setup.config_manager import ConfigManager
+from setup_master.config_manager import ConfigManager
 
 import utils
 from utils.exceptions.exceptions import *
