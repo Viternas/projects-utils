@@ -2,12 +2,12 @@ from loguru import logger
 from typing import Optional
 import os
 
-from SRC.EXCEPTIONS.Exceptions import *
-from SRC.SETUP.ConfigManager import ConfigManager
-from SRC.UTILS.CONFIG.Config import Config as CF
-from SRC.UTILS.DATABASE.DatabaseDriver import DatabaseDriver as DB
-from SRC.UTILS.SECRETS.Secrets import Encrypt as SE
-from SRC.UTILS.AI.AiDriver import AIDriver as AI
+from UTILS.EXCEPTIONS.Exceptions import *
+from SETUP.ConfigManager import ConfigManager
+from UTILS.CONFIG.Config import Config as CF
+from UTILS.DATABASE.DatabaseDriver import DatabaseDriver as DB
+from UTILS.SECRETS.Secrets import Encrypt as SE
+from UTILS.AI.AiDriver import AIDriver as AI
 
 
 class Master:
