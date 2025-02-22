@@ -2,12 +2,12 @@ from loguru import logger
 from typing import Optional
 import os
 
-from utils.exceptions.Exceptions import *
-from setup.ConfigManager import ConfigManager
-from utils.config.Config import Config as CF
-from utils.database.DatabaseDriver import DatabaseDriver as DB
-from utils.secrets.Secrets import Encrypt as SE
-from utils.ai.AiDriver import AIDriver as AI
+from utils.exceptions.exceptions import *
+from setup.config_manager import ConfigManager
+from utils.config.config import Config as CF
+from utils.database.database_driver import DatabaseDriver as DB
+from utils.secrets.secrets import Encrypt as SE
+from utils.ai.ai_driver import AIDriver as AI
 
 
 class Master:
