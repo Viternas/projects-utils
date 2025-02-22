@@ -12,7 +12,7 @@ A collection of Python utilities for database operations, AI integration, secure
 ## Installation
 
 ```bash
-pip install project-utils
+pip install ./project-utils
 ```
 
 ## Config.py creation
