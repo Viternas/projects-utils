@@ -16,7 +16,6 @@ class Master:
     def __init__(self, working_dir: str=None, config_file_name: str=None):
         self.working_directory = working_dir
         self.config_file_name = config_file_name
-        print(self.config_file_name)
         self.set_working_directory()
         logger.info("STARTING MASTER")
 

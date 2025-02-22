@@ -16,17 +16,8 @@
         "conn": "dGVzdA==",
         "jwt": "dGVzdA=="
     },
-    "GPT": {
+    "ai": {
         "encoded": true,
         "GPT_KEY": "c2stcHJvai01Yks5SjEtT1d3b1cxSWRiWUpHdXM4Y01EM3lvXzlLTGFpaHd3WjR1U1BmTC1TaTJTbXpIeDFybG1GVDNCbGJrRko0Q2FUWmlxeHpzYmNTYm9Lb2ZLczhPc2oyUHBvMXlHZ1dpQ3g3NzJubUlpcWIyTHhwSGktVXNXMkFB"
-    },
-    "Agent": {
-        "encoded": true,
-        "Project_Manager_Model": "Z3B0NC1vMQ==",
-        "Project_Manager_Number_Max": 1,
-        "Team_Leader_Model": "Z3B0LTRvLW1pbmk=",
-        "Team_Leader_Number_Max": 3,
-        "Worker_Model": "Z3B0LTRvLW1pbmk=",
-        "Worker_Number_Max": 3
     }
 }
