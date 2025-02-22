@@ -52,7 +52,7 @@ class JsonFormatter:
 
 if __name__ == '__main__':
     import utils.config
-    package_dir = os.path.dirname(utils.CONFIG.__file__)
+    package_dir = os.path.dirname(utils.config.__file__)
     print(package_dir)
     run = JsonFormatter(
         package_dir=package_dir,

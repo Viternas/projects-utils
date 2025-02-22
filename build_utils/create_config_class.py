@@ -33,15 +33,23 @@ class CreateConfigClass(object):
             file.writelines("\n\n\nclass Config(object): \n")
             if self.config_file_location != self.config_file_name:
                 file.writelines(
-                    "    def __init__(self, kubernetes: bool = None):\n")
+                    "    def __init__(self, kubernetes: bool = None, config_file: str = None):\n")
                 file.writelines("        if kubernetes:\n")
                 file.writelines("            self.k8_mode()\n")
                 file.writelines("        else:\n")
                 file.writelines(
-                    "            with open('%s') as files:\n" %
+                    "            if not config_file:\n")
+                file.writelines(
+                    "                with open('%s') as files:\n" %
                     self.config_file_name)
                 file.writelines(
-                    "                self.data = json.load(files)\n")
+                    "                    self.data = json.load(files)\n")
+                file.writelines(
+                    "            else:\n")
+                file.writelines(
+                    "                with open(config_file) as files:\n")
+                file.writelines(
+                    "                    self.data = json.load(files)\n")
                 file.writelines("    def k8_mode(self):\n")
                 file.writelines(
                     "        with open('%s') as files:\n" %
@@ -87,7 +95,7 @@ class CreateConfigClass(object):
 if __name__ == '__main__':
     # Example usage
     import utils.config
-    package_dir = os.path.dirname(utils.CONFIG.__file__)
+    package_dir = os.path.dirname(utils.config.__file__)
     CreateConfigClass(package_dir=package_dir,
                       config_file_name='example.config_encoded.json'
                       ).create_config_class()

@@ -2,8 +2,10 @@ from loguru import logger
 from typing import Optional
 import os
 
-from utils.exceptions.exceptions import *
 from setup.config_manager import ConfigManager
+
+import utils
+from utils.exceptions.exceptions import *
 from utils.config.config import Config as CF
 from utils.database.database_driver import DatabaseDriver as DB
 from utils.secrets.secrets import Encrypt as SE
@@ -11,8 +13,10 @@ from utils.ai.ai_driver import AIDriver as AI
 
 
 class Master:
-    def __init__(self, working_dir=None):
+    def __init__(self, working_dir: str=None, config_file_name: str=None):
         self.working_directory = working_dir
+        self.config_file_name = config_file_name
+        print(self.config_file_name)
         self.set_working_directory()
         logger.info("STARTING MASTER")
 
@@ -31,12 +35,12 @@ class Master:
         self.global_process_limit = 25
 
     def load_configuration(self):
+        print(utils.config.__file__)
         config_dir = os.path.dirname(
-            os.path.abspath(
-                SRC.UTILS.CONFIG.__file__))
+            os.path.abspath(utils.config.__file__))
         config_result = ConfigManager(
             config_dir=config_dir,
-            config_name='unencoded_example.config_encoded.json').open_config()
+            config_name=self.config_file_name).open_config()
         if isinstance(
                 config_result,
                 tuple) and config_result[0] and config_result[1]:
@@ -116,4 +120,4 @@ class Master:
 
 
 if __name__ == '__main__':
-    test_run = Master(working_dir='')
+    test_run = Master(working_dir='', config_file_name='example.config_encoded.json')
