@@ -1,10 +1,7 @@
-import pathlib
-
 from loguru import logger
 from typing import Optional
 import os
 
-import SRC
 from SRC.EXCEPTIONS.Exceptions import *
 from SRC.SETUP.ConfigManager import ConfigManager
 from SRC.UTILS.CONFIG.Config import Config as CF
@@ -105,4 +102,5 @@ class Master:
             logger.error(f"Failed to set working directory: {e}")
             raise
 
-
+if __name__ == '__main__':
+    test_run = Master(working_dir='')
