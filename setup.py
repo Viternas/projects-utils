@@ -9,8 +9,7 @@ setup(
         "setuptools",
         "autopep8",
         "psycopg2>=2.9.10",
-        "SQLAlchemy>=3.1.1"
-        "sqlalchemy>=1.4.0",
+        "sqlalchemy>=2.0.38",
         "cryptography>=3.4.0",
         "passlib>=1.7.4",
         "pydantic>=2.0.0",
