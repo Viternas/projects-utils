@@ -15,7 +15,7 @@ class Encrypt(object):
                  secret_key: str = None,
                  ):
 
-        self.conn = ""#http.client.HTTPSConnection(conn)
+        self.conn = ""  # http.client.HTTPSConnection(conn)
         self.salt_key = salt_key
         self.secret_key = secret_key
         self.pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
@@ -107,4 +107,6 @@ class Encrypt(object):
 
 if __name__ == "__main__":
     test = Encrypt()
-    print(test.base64_decode_string(encoded_string='eyd0YXNrJzogJzFiMTU1MzgwODk5NjAxZmMyOGZiZGY1ZjEyMDYxZmY1M2YzYTBhODIwMTA3NzA0MWEyMjFmY2ViNTcyM2EzYmUnfQ=='))
+    print(
+        test.base64_decode_string(
+            encoded_string='eyd0YXNrJzogJzFiMTU1MzgwODk5NjAxZmMyOGZiZGY1ZjEyMDYxZmY1M2YzYTBhODIwMTA3NzA0MWEyMjFmY2ViNTcyM2EzYmUnfQ=='))

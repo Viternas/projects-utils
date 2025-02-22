@@ -17,7 +17,6 @@ class DatabaseDriver(object):
             mincon: int = 1
     ):
 
-
         self.user = user
         self.password = password
         self.host = host
@@ -25,7 +24,6 @@ class DatabaseDriver(object):
         self.database = database
         self.mincon = mincon
         self.maxcon = maxcon
-
 
         # Create SQLAlchemy engine with QueuePool
         self.engine = create_engine(

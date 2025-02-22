@@ -27,7 +27,7 @@ class CreateConfigClass(object):
         """
         Generates the Config.py file based on the provided config_file.
         """
-        config_py = pathlib.Path(package_dir) / 'Config.py'
+        config_py = pathlib.Path(package_dir) / 'config.py'
         with open(config_py, 'w') as file:
             file.writelines("import json")
             file.writelines("\n\n\nclass Config(object): \n")
@@ -73,14 +73,21 @@ class CreateConfigClass(object):
                 file.writelines("\n")
             file.writelines("\nif __name__ == '__main__':\n")
             file.writelines("    print('On Main')")
-        subprocess.run(['python', '-m', 'autopep8', '--in-place', '--aggressive', '--aggressive', config_py], check=True)
+        subprocess.run(['python',
+                        '-m',
+                        'autopep8',
+                        '--in-place',
+                        '--aggressive',
+                        '--aggressive',
+                        config_py],
+                       check=True)
 #
 
 
 if __name__ == '__main__':
     # Example usage
-    import UTILS.CONFIG
-    package_dir = os.path.dirname(UTILS.CONFIG.__file__)
+    import utils.config
+    package_dir = os.path.dirname(utils.CONFIG.__file__)
     CreateConfigClass(package_dir=package_dir,
                       config_file_name='example.config_encoded.json'
                       ).create_config_class()

@@ -5,7 +5,12 @@ import pathlib
 
 
 class JsonFormatter:
-    def __init__(self, package_dir: str, config_file, encode: bool = None, encrypt: bool = None):
+    def __init__(
+            self,
+            package_dir: str,
+            config_file,
+            encode: bool = None,
+            encrypt: bool = None):
         self.config_file = pathlib.Path(package_dir) / config_file
         self.encode = encode
         self.encrypt = encrypt
@@ -15,29 +20,22 @@ class JsonFormatter:
     def encoder(self):
         with open(self.config_file) as files:
             file = json.load(files)
-
-        # Start encoding the JSON structure
         encoded_json = self._encode_dict(file)
 
-        # Save the processed JSON to a new file with the _encoded suffix
         self.save_encoded_file(encoded_json)
 
     def _encode_dict(self, data):
-        """Recursively encode a dictionary."""
         encoded_dict = {}
 
         for key, value in data.items():
             if isinstance(value, dict):
-                # Recursively encode nested dictionaries
                 encoded_dict[key] = self._encode_dict(value)
             elif isinstance(value, str):
-                # Encode strings to base64
                 text_bytes = value.encode('utf-8')
                 base64_bytes = base64.b64encode(text_bytes)
                 base64_text = base64_bytes.decode('utf-8')
                 encoded_dict[key] = base64_text
             else:
-                # Keep other data types as they are
                 encoded_dict[key] = value
 
         return encoded_dict
@@ -53,7 +51,10 @@ class JsonFormatter:
 
 
 if __name__ == '__main__':
-    import UTILS.CONFIG
-    package_dir = os.path.dirname(UTILS.CONFIG.__file__)
+    import utils.config
+    package_dir = os.path.dirname(utils.CONFIG.__file__)
     print(package_dir)
-    run = JsonFormatter(package_dir=package_dir, config_file='unencoded_example.config.json', encode=True)
+    run = JsonFormatter(
+        package_dir=package_dir,
+        config_file='unencoded_example.config.json',
+        encode=True)

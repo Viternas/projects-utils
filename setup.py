@@ -4,6 +4,7 @@ setup(
     name="project_utils",
     version="0.1.0",
     packages=find_packages(),
+    package_dir={'': '.'},
     install_requires=[
         "setuptools",
         "autopep8",
@@ -25,7 +26,7 @@ setup(
     python_requires=">=3.8",
     description="Agent utility functions for database, AI, config and security operations",
     package_data={
-        'UTILS.CONFIG': ['*.json'],
+        'utils.config': ['*.json'],  # Updated package data path
     },
     include_package_data=True,
 )

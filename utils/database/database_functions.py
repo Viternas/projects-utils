@@ -1,16 +1,19 @@
 import ast
 import json
-import uuid
 from datetime import datetime
 from typing import List, Tuple, Optional, Any, Dict
-
 from loguru import logger
+
 
 class DBFunctions:
     def __init__(self, DB):
         self.db = DB
 
-    def insert(self, table: str, data: Dict[str, Any], returning: str = None) -> Optional[Any]:
+    def insert(self,
+               table: str,
+               data: Dict[str,
+                          Any],
+               returning: str = None) -> Optional[Any]:
         """
         Generic insert function that handles dictionary of column-value pairs.
 
@@ -69,9 +72,15 @@ class DBFunctions:
         return self.db.execute(execution_string=update_string, commit=True,
                                fetch_one=bool(returning))
 
-    def select(self, table: str, columns: [str, List[str]] = None,
-               where: Dict[str, Any] = None, order_by: str = None,
-               limit: int = None, fetch_all: bool = True) -> List[Tuple] | Tuple:
+    def select(self,
+               table: str,
+               columns: [str,
+                         List[str]] = None,
+               where: Dict[str,
+                           Any] = None,
+               order_by: str = None,
+               limit: int = None,
+               fetch_all: bool = True) -> List[Tuple] | Tuple:
         """
         Generic select function with support for various clauses.
 
@@ -100,7 +109,6 @@ class DBFunctions:
 
         if limit:
             select_string += f" LIMIT {limit}"
-
 
         return self.db.execute(execution_string=select_string,
                                fetch_all=fetch_all,
@@ -169,16 +177,10 @@ class DBFunctions:
         elif isinstance(value, datetime):
             return f"'{value.isoformat()}'"
         else:
-            # For non-JSON string types, retain quotes as per normal SQL syntax
-            sanitized_str = str(value).replace("'", "''")  # Escape single quotes
+            sanitized_str = str(value).replace(
+                "'", "''")  # Escape single quotes
             return f"'{sanitized_str}'"
-
-
-
 
 
 if __name__ == '__main__':
     import os
-
-
-

@@ -1,12 +1,12 @@
 # __init__.py
-from UTILS.AI.AiDriver import AIDriver
-from UTILS.DATABASE.DatabaseDriver import DatabaseDriver
-from UTILS.DATABASE.DBFunctions import DBFunctions
-from UTILS.SECRETS.Secrets import Encrypt
-from SETUP.ConfigManager import ConfigManager
-from SETUP.Master import Master
-from BUILT_UTILS.Collater import *
-from BUILT_UTILS.CreateConfig import CreateConfigClass
-from BUILT_UTILS.EncodeConfigJson import JsonFormatter
+from utils.ai.AiDriver import AIDriver
+from utils.database.DatabaseDriver import DatabaseDriver
+from utils.database.DBFunctions import DBFunctions
+from utils.secrets.Secrets import Encrypt
+from setup.ConfigManager import ConfigManager
+from setup.Master import Master
+from build_utils.Collater import *
+from build_utils.CreateConfig import CreateConfigClass
+from build_utils.EncodeConfigJson import JsonFormatter
 
 __version__ = "0.1.0"

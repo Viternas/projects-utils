@@ -45,9 +45,17 @@ if __name__ == "__main__":
     start_directory = '..'
     output_text_file = 'utils.txt'
 
-    folders_to_exclude = ['venv', '__pycache__', '.git', 'ThreadFactory', 'SPECIALITY', 'project_utils.egg-info', '.venv']
+    folders_to_exclude = [
+        'venv',
+        '__pycache__',
+        '.git',
+        'ThreadFactory',
+        'SPECIALITY',
+        'project_utils.egg-info',
+        '.venv']
 
-    unique_python_files = find_unique_py_files(start_directory, folders_to_exclude)
+    unique_python_files = find_unique_py_files(
+        start_directory, folders_to_exclude)
 
     for item in unique_python_files:
         print(item)

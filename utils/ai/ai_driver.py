@@ -4,6 +4,7 @@ from openai import OpenAI, api_key, base_url
 from pydantic import BaseModel
 from enum import Enum
 
+
 class ClientProvider(Enum):
     OPEN_AI = 'open_ai'
     OPEN_ROUTER = 'open_router'
@@ -37,7 +38,7 @@ class AIDriver:
                     {"role": "system", "content": self.agent_prompt},
                     {"role": "user", "content": prompt},
                 ],
-                #max_tokens=10000,
+                # max_tokens=10000,
                 temperature=0.2,
             )
             logger.debug(f"Received response: {response}")
@@ -56,14 +57,14 @@ class AIDriver:
     def gpt_parse(self, prompt):
         print(self.model)
         self.model = self.model.split('/')[1]
-        #logger.info(f"Parsing prompt with GPT: {prompt[:30]}")
+        # logger.info(f"Parsing prompt with GPT: {prompt[:30]}")
         response = self.client.beta.chat.completions.parse(
             model=self.model,
             messages=[
                 {"role": "system", "content": self.agent_prompt},
                 {"role": "user", "content": prompt},
             ],
-            #max_tokens=10000,
+            # max_tokens=10000,
             temperature=0.2,
             response_format=self.parser,
         )
@@ -86,7 +87,7 @@ class AIDriver:
                     {"role": "system", "content": self.agent_prompt},
                     {"role": "user", "content": prompt},
                 ],
-                #max_tokens=10000,
+                # max_tokens=10000,
                 temperature=0.1,
             )
             self.switch_context(gpt=True)
@@ -111,7 +112,7 @@ class AIDriver:
                     {"role": "system", "content": self.agent_prompt},
                     {"role": "user", "content": prompt},
                 ],
-                #max_tokens=1000,
+                # max_tokens=1000,
                 temperature=0.2,
                 response_format=self.parser,
             )
@@ -130,10 +131,12 @@ class AIDriver:
 
     def set_client(self, client_provider: ClientProvider):
         client_mapper = {
-            ClientProvider.OPEN_AI: OpenAI(api_key=self.open_ai_key),
-            ClientProvider.OPEN_ROUTER: OpenAI(api_key=self.open_router_key, base_url="https://openrouter.ai/api/v1"),
-            ClientProvider.OLLAMA: exit
-        }
+            ClientProvider.OPEN_AI: OpenAI(
+                api_key=self.open_ai_key),
+            ClientProvider.OPEN_ROUTER: OpenAI(
+                api_key=self.open_router_key,
+                base_url="https://openrouter.ai/api/v1"),
+            ClientProvider.OLLAMA: exit}
         self.client = client_mapper.get(client_provider)
 
         if self.client is None:
@@ -167,18 +170,6 @@ class AIDriver:
             return "An error occurred."
 
 
-
-
 if __name__ == "__main__":
-    #logger.remove()
+    # logger.remove()
     run = AIDriver
-
-
-
-
-
-
-
-
-
-
