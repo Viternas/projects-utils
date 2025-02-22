@@ -15,6 +15,11 @@ A collection of Python utilities for database operations, AI integration, secure
 pip install project-utils
 ```
 
+## Config.py creation
+```bazaar
+python3 CreateConfig.py
+```
+
 ## Quick Start
 
 ```python

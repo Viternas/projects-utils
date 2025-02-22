@@ -44,13 +44,16 @@ class JsonFormatter:
 
     def save_encoded_file(self, final_json):
         base_file_name = os.path.splitext(self.config_file)[0]
+        base_file_name = base_file_name.split('unencoded_')[1]
         encoded_file_name = f"{base_file_name}_encoded.json"
-        with open(encoded_file_name, 'w') as outfile:
+        output_file = pathlib.Path(package_dir) / encoded_file_name
+        with open(output_file, 'w') as outfile:
             json.dump(final_json, outfile, indent=4)
         print(f"Encoded JSON saved to {encoded_file_name}")
 
 
 if __name__ == '__main__':
-    import SRC.UTILS.CONFIG
-    package_dir = os.path.dirname(SRC.UTILS.CONFIG.__file__)
+    import UTILS.CONFIG
+    package_dir = os.path.dirname(UTILS.CONFIG.__file__)
+    print(package_dir)
     run = JsonFormatter(package_dir=package_dir, config_file='unencoded_example.config.json', encode=True)

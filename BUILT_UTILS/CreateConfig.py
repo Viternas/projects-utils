@@ -79,8 +79,8 @@ class CreateConfigClass(object):
 
 if __name__ == '__main__':
     # Example usage
-    import SRC.UTILS.CONFIG
-    package_dir = os.path.dirname(SRC.UTILS.CONFIG.__file__)
+    import UTILS.CONFIG
+    package_dir = os.path.dirname(UTILS.CONFIG.__file__)
     CreateConfigClass(package_dir=package_dir,
-                      config_file_name='example_encoded.config.json'
+                      config_file_name='example.config_encoded.json'
                       ).create_config_class()

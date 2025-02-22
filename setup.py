@@ -6,6 +6,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "setuptools",
+        "autopep8",
         "sqlalchemy>=1.4.0",
         "cryptography>=3.4.0",
         "passlib>=1.7.4",
