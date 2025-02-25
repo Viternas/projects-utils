@@ -11,6 +11,7 @@ class JsonFormatter:
             config_file,
             encode: bool = None,
             encrypt: bool = None):
+        self.package_dir = package_dir
         self.config_file = pathlib.Path(package_dir) / config_file
         self.encode = encode
         self.encrypt = encrypt
@@ -42,12 +43,13 @@ class JsonFormatter:
 
     def save_encoded_file(self, final_json):
         base_file_name = os.path.splitext(self.config_file)[0]
+        print(base_file_name)
         base_file_name = base_file_name.split('unencoded_')[1]
         encoded_file_name = f"{base_file_name}_encoded.json"
-        output_file = pathlib.Path(package_dir) / encoded_file_name
+        output_file = pathlib.Path(self.package_dir) / encoded_file_name
         with open(output_file, 'w') as outfile:
             json.dump(final_json, outfile, indent=4)
-        print(f"Encoded JSON saved to {encoded_file_name}")
+        print(f"Encoded JSON saved to {encoded_file_name} @ {self.package_dir}")
 
 
 if __name__ == '__main__':
