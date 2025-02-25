@@ -43,7 +43,6 @@ class JsonFormatter:
 
     def save_encoded_file(self, final_json):
         base_file_name = os.path.splitext(self.config_file)[0]
-        print(base_file_name)
         base_file_name = base_file_name.split('unencoded_')[1]
         encoded_file_name = f"{base_file_name}_encoded.json"
         output_file = pathlib.Path(self.package_dir) / encoded_file_name

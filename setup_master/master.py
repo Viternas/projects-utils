@@ -2,6 +2,8 @@ from loguru import logger
 from typing import Optional
 import os
 
+from sqlalchemy.testing.plugin.plugin_base import config
+
 from setup_master.config_manager import ConfigManager
 
 import utils
@@ -42,7 +44,10 @@ class Master:
                 config_dir=config_dir,
                 config_name=self.config_file_name).open_config()
         else:
-            print()
+            config_result = ConfigManager(
+                config_dir=self.config_file_directory,
+                config_name=self.config_file_name).open_config()
+
         if isinstance(
                 config_result,
                 tuple) and config_result[0] and config_result[1]:
