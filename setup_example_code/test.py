@@ -7,5 +7,11 @@ from build_utils.encode_config_json import JsonFormatter
 #ec = JsonFormatter(package_dir=os.path.dirname(__file__), config_file='unencoded_test.config.json', encode=True)
 #cc = CreateConfigClass(package_dir=os.path.dirname(__file__), config_file_name='test.config_encoded.json').create_config_class()
 from setup_master.master import Master
+from utils.ai.ai_enums import Models
+
 run = Master(working_dir=os.path.dirname(__file__), config_file_name='test.config_encoded.json', config_file_directory=os.path.dirname(__file__))
+
+run.AI.model = Models.DEEPSEEK_R1.value
+a = run.AI.open_router_chat('this is a test')
+print(a)
 

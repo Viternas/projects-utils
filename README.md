@@ -33,7 +33,7 @@ master = Master()
 result = master.DB.execute("SELECT version()")
 
 # AI operations
-response = master.AI.chat_with_gpt("Hello, how are you?")
+response = master.AI.open_ai_chat("Hello, how are you?")
 
 # Encryption
 encrypted = master.SE.encrypt_message("sensitive data")

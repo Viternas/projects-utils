@@ -2,6 +2,7 @@ import os
 
 from loguru import logger
 from openai import OpenAI, api_key, base_url
+from ollama import Client as OllamaClient
 from pydantic import BaseModel
 from utils.ai.ai_enums import *
 
@@ -23,7 +24,7 @@ class AIDriver:
         self.client = None
         logger.success(f"AiDriver initialized")
 
-    def chat_with_gpt(self, prompt):
+    def open_ai_chat(self, prompt):
         logger.info(f"Sending prompt to GPT: {prompt}")
         self.set_client(client_provider=ClientProvider.OPEN_AI)
         try:
@@ -34,6 +35,30 @@ class AIDriver:
                     {"role": "user", "content": prompt},
                 ],
                 # max_tokens=10000,
+                temperature=0.2,
+            )
+            logger.debug(f"Received response: {response}")
+            if response.choices:
+                content = response.choices[0].message.content
+                logger.success("Response retrieved successfully.")
+                return content, response.usage
+            else:
+                logger.warning("No response from the API.")
+                return "No response from the API."
+        except Exception as e:
+            logger.error(f"An error occurred while chatting with GPT: {e}")
+            return "An error occurred."
+
+    def ollama_chat(self, prompt):
+        logger.info(f"Sending prompt to Ollama: {prompt}")
+        self.set_client(client_provider=ClientProvider.OLLAMA)  # Set the client to Ollama
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": self.agent_prompt},
+                    {"role": "user", "content": prompt},
+                ],
                 temperature=0.2,
             )
             logger.debug(f"Received response: {response}")
@@ -244,11 +269,14 @@ class AIDriver:
     def set_client(self, client_provider: ClientProvider):
         client_mapper = {
             ClientProvider.OPEN_AI: lambda: OpenAI(
-                api_key=self.open_ai_key),
+                api_key=self.open_ai_key,
+                base_url=ClientProviderEndpoints.OPEN_AI.value),
             ClientProvider.OPEN_ROUTER: lambda: OpenAI(
                 api_key=self.open_router_key,
-                base_url="https://openrouter.ai/api/v1"),
-            ClientProvider.OLLAMA: lambda: exit
+                base_url=ClientProviderEndpoints.Open_Router.value),
+            ClientProvider.OLLAMA: lambda: OllamaClient(
+                api_key=self.ollama_key,
+            base_url=ClientProviderEndpoints.OLLAMA.value)
         }
 
         client_factory = client_mapper.get(client_provider)

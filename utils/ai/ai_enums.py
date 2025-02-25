@@ -17,3 +17,8 @@ class ClientProvider(Enum):
     OPEN_AI = 'open_ai'
     OPEN_ROUTER = 'open_router'
     OLLAMA = 'ollama'
+
+class ClientProviderEndpoints(Enum):
+    OPEN_AI = 'https://api.openai.com/v1'
+    Open_Router = 'https://openrouter.ai/api/v1'
+    OLLAMA = 'https://chat.kxsb.org/ollama'
