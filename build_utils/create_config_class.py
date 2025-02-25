@@ -2,7 +2,7 @@ import json
 import os
 import subprocess
 import pathlib
-
+import utils
 
 class CreateConfigClass(object):
     def __init__(self, package_dir: str, config_file_name: str):
@@ -13,7 +13,8 @@ class CreateConfigClass(object):
                 package_dir (str): Directory path where the config file is located
                 config_file_name (str): Name of the config file (e.g., 'config.json')
             """
-        config_file = pathlib.Path(package_dir) / config_file_name
+        self.package_dir = package_dir
+        config_file = pathlib.Path(self.package_dir) / config_file_name
 
         with open(config_file, 'r') as file:
             self.config_file = json.load(file)
@@ -27,7 +28,7 @@ class CreateConfigClass(object):
         """
         Generates the Config.py file based on the provided config_file.
         """
-        config_py = pathlib.Path(package_dir) / 'config.py'
+        config_py = pathlib.Path(os.path.dirname(utils.__file__)) / 'config/config.py'
         with open(config_py, 'w') as file:
             file.writelines("import json")
             file.writelines("\n\n\nclass Config(object): \n")

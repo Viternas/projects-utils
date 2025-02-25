@@ -13,8 +13,9 @@ from utils.ai.ai_driver import AIDriver as AI
 
 
 class Master:
-    def __init__(self, working_dir: str=None, config_file_name: str=None):
+    def __init__(self, working_dir: str=None, config_file_directory: str=None, config_file_name: str=None):
         self.working_directory = working_dir
+        self.config_file_directory = config_file_directory
         self.config_file_name = config_file_name
         self.set_working_directory()
         logger.info("STARTING MASTER")
@@ -34,12 +35,14 @@ class Master:
         self.global_process_limit = 25
 
     def load_configuration(self):
-        print(utils.config.__file__)
-        config_dir = os.path.dirname(
-            os.path.abspath(utils.config.__file__))
-        config_result = ConfigManager(
-            config_dir=config_dir,
-            config_name=self.config_file_name).open_config()
+        if not self.config_file_directory:
+            config_dir = os.path.dirname(
+                os.path.abspath(utils.config.__file__))
+            config_result = ConfigManager(
+                config_dir=config_dir,
+                config_name=self.config_file_name).open_config()
+        else:
+            print()
         if isinstance(
                 config_result,
                 tuple) and config_result[0] and config_result[1]:
