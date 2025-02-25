@@ -11,7 +11,7 @@ from utils.ai.ai_enums import Models
 
 run = Master(working_dir=os.path.dirname(__file__), config_file_name='test.config_encoded.json', config_file_directory=os.path.dirname(__file__))
 
-run.AI.model = Models.DEEPSEEK_R1.value
-a = run.AI.open_router_chat('this is a test')
+run.AI.model = Models.GEMMA2_9B.model_id
+a = run.AI.ollama_chat('this is a test')
 print(a)
 

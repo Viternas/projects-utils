@@ -19,6 +19,8 @@ class AIDriver:
         self.open_router_key = OPEN_ROUTER_KEY
         self.ollama_key = OLLAMA_KEY
         self.agent_prompt = agent_prompt
+        if self.agent_prompt is None:
+            self.agent_prompt = ''
         self.model = AI_MODEL
         self.parser = parser
         self.client = None
@@ -51,21 +53,22 @@ class AIDriver:
 
     def ollama_chat(self, prompt):
         logger.info(f"Sending prompt to Ollama: {prompt}")
-        self.set_client(client_provider=ClientProvider.OLLAMA)  # Set the client to Ollama
+        self.set_client(client_provider=ClientProvider.OLLAMA)
         try:
-            response = self.client.chat.completions.create(
+            prompt = self.agent_prompt + prompt
+            response = self.client.generate(
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": self.agent_prompt},
-                    {"role": "user", "content": prompt},
-                ],
-                temperature=0.2,
+                prompt=prompt
             )
             logger.debug(f"Received response: {response}")
-            if response.choices:
-                content = response.choices[0].message.content
+            if response:
+                content = response.response
+                usage = {}
                 logger.success("Response retrieved successfully.")
-                return content, response.usage
+                """
+                Need to standard the usage return to be the same type as openai standards
+                """
+                return content, usage
             else:
                 logger.warning("No response from the API.")
                 return "No response from the API."
@@ -275,8 +278,8 @@ class AIDriver:
                 api_key=self.open_router_key,
                 base_url=ClientProviderEndpoints.Open_Router.value),
             ClientProvider.OLLAMA: lambda: OllamaClient(
-                api_key=self.ollama_key,
-            base_url=ClientProviderEndpoints.OLLAMA.value)
+                headers={"Authorization": f"Bearer {self.ollama_key}"},
+                host=ClientProviderEndpoints.OLLAMA.value)
         }
 
         client_factory = client_mapper.get(client_provider)
