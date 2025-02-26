@@ -42,7 +42,7 @@ def write_files_to_text(py_files, output_file):
 
 
 if __name__ == "__main__":
-    start_directory = '..'
+    start_directory = '../../'
     output_text_file = 'utils.txt'
 
     folders_to_exclude = [
