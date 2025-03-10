@@ -5,6 +5,7 @@ from openai import OpenAI, api_key, base_url
 from ollama import Client as OllamaClient
 from pydantic import BaseModel
 from utils.ai.ai_enums import *
+from utils.ai.ai_basemodels import *
 
 class AIDriver:
     def __init__(self,
@@ -64,7 +65,7 @@ class AIDriver:
             logger.debug(f"Received response: {response}")
             if response:
                 content = response.response
-                usage = {}
+                usage = convert_ollama_to_openai_usage(ollama_output=response.dict())
                 logger.success("Response retrieved successfully.")
                 """
                 Need to standard the usage return to be the same type as openai standards
