@@ -30,6 +30,7 @@ class AIDriver:
         logger.info(f"Sending prompt to GPT: {prompt}")
         self.set_client(client_provider=ClientProvider.OPEN_AI)
         try:
+            self.model = self.model.split('/')[1] # open_ai does not take the model prefix in the string
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[
