@@ -15,6 +15,7 @@ setup(
         "pydantic>=2.0.0",
         "openai>=1.0.0",
         "loguru>=0.6.0",
+        "ollama"
     ],
     extras_require={
         "dev": [
