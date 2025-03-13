@@ -44,6 +44,11 @@ class Models(Enum):
         """Return a list of all model IDs"""
         return [model.model_id for model in cls]
 
+    @classmethod
+    def model_names(cls):
+        """Return a list of all enum member names"""
+        return [model.name for model in cls]
+
 
 class ClientProvider(Enum):
     OPEN_AI = 'open_ai'
