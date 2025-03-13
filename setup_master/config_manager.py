@@ -28,10 +28,7 @@ class ConfigManager:
             return False, None
 
         if not config_path.exists():
-            logger.error(
-                f"Config file {
-                    self.config_name} does not exist in {
-                    self.config_dir}")
+            logger.error(f"Config file {self.config_name} does not exist in {self.config_dir}")
             return False, None
 
         try:
