@@ -119,8 +119,7 @@ class Master:
             else:
                 os.chdir(self.working_directory)
                 logger.success(
-                    f"Working directory set to {
-                        self.working_directory}")
+                    f"Working directory set to {self.working_directory}")
         except Exception as e:
             logger.error(f"Failed to set working directory: {e}")
             raise
