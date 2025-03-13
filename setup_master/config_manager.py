@@ -36,9 +36,7 @@ class ConfigManager:
 
         try:
             config_data = json.loads(config_path.read_text())
-            logger.success(
-                f"Config file {
-                    self.config_name} loaded successfully")
+            logger.success(f"Config file {self.config_name} loaded successfully")
             return True, config_path
         except json.JSONDecodeError as e:
             logger.error(f"Error parsing JSON in {config_path}: {e}")
