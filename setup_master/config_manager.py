@@ -2,7 +2,7 @@ import json
 import os
 from pathlib import Path
 from loguru import logger
-from typing import Optional, Dict, Any, Tuple
+from typing import Optional, Dict, Any, Tuple, Union
 
 
 class ConfigManager:
@@ -20,7 +20,7 @@ class ConfigManager:
         logger.info(f"Config Directory: {self.config_dir}")
         logger.info(f"Config Name: {self.config_name}")
 
-    def open_config(self) -> tuple[bool, None] | tuple[bool, Path]:
+    def open_config(self) -> Union[Tuple[bool, None], Tuple[bool, Path]]:
         config_path = self.config_dir / self.config_name
 
         if not self.config_dir.is_dir():
