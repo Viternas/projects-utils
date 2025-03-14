@@ -46,7 +46,7 @@ class Models(Enum):
 
     @classmethod
     def model_names(cls):
-        """Return a list of all enum member names"""
+        """Return a list of all enum member names -- """
         return [model.name for model in cls]
 
 
