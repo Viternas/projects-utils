@@ -6,7 +6,9 @@ from enum import Enum
 class Models(Enum):
     DEEPSEEK_R1 = ('deepseek/deepseek-r1', 'open_router')
     DEEPSEEK = ('deepseek/deepseek-chat', 'open_router')
-    SONNET = ('anthropic/claude-3.5-sonnet:beta', 'open_router')
+    SONNET_3_5 = ('anthropic/claude-3.5-sonnet:beta', 'open_router')
+    SONNET_3_7 = ('anthropic/claude-3.7-sonnet:beta', 'open_router')
+    SONNET_THINKING = ('anthropic/claude-3.7-sonnet:thinking', 'open_router')
     O1_PREVIEW = ('openai/o1-preview', 'openai')
     O1_MINI = ('openai/o1-mini', 'openai')
     GPT_4O = ('openai/gpt-4o-2024-08-06', 'openai')
@@ -30,6 +32,8 @@ class Models(Enum):
     MINICPM_V = ('minicpm-v:latest', 'ollama')
     MARCO_O1 = ('marco-o1:latest', 'ollama')
     TULU3 = ('tulu3:latest', 'ollama')
+    GEMINI_FLASH_2 = ('google/gemini-2.0-flash-001', 'open_router')
+    ANUBIS_PRO = ('thedrummer/anubis-pro-105b-v1', 'open_router')
 
     def __init__(self, model_id, provider):
         self._model_id = model_id
