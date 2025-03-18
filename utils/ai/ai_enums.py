@@ -12,7 +12,7 @@ class Models(Enum):
     O1_PREVIEW = ('openai/o1-preview', 'open_ai')
     O1 = ('openai/o1-2024-12-17', 'open_ai')
     O1_MINI = ('openai/o1-mini', 'open_ai')
-    O3_MINI = ('openai/o3-mini-2025-1-31', 'open_ai')
+    O3_MINI = ('openai/o3-mini', 'open_ai')
     GPT_4O = ('openai/gpt-4o-2024-08-06', 'open_ai')
     GPT_4O_MINI = ('openai/gpt-4o-mini', 'open_ai')
     GEMINI_FLASH = ('google/gemini-2.0-flash-exp:free', 'open_router')
