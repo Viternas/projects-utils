@@ -39,7 +39,7 @@ class AIDriver:
                     {"role": "user", "content": prompt},
                 ],
                 # max_tokens=10000,
-                temperature=0.2,
+                #temperature=0.2,
             )
             logger.debug(f"Received response: {response}")
             if response.choices:
@@ -93,7 +93,7 @@ class AIDriver:
                     {"role": "user", "content": prompt},
                 ],
                 # max_tokens=10000,
-                temperature=0.2,
+                #temperature=0.2,
                 response_format=self.parser,
             )
             logger.debug(f"Received parse response: {response}")
