@@ -10,6 +10,7 @@ class Models(Enum):
     SONNET_3_7 = ('anthropic/claude-3.7-sonnet:beta', 'open_router')
     SONNET_THINKING = ('anthropic/claude-3.7-sonnet:thinking', 'open_router')
     O1_PREVIEW = ('openai/o1-preview', 'openai')
+    O1 = ('openai/o1-2024-12-17', 'openai')
     O1_MINI = ('openai/o1-mini', 'openai')
     O3_MINI = ('openai/o3-mini-2025-1-31', 'openai')
     GPT_4O = ('openai/gpt-4o-2024-08-06', 'openai')
