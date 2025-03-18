@@ -11,6 +11,7 @@ class Models(Enum):
     SONNET_THINKING = ('anthropic/claude-3.7-sonnet:thinking', 'open_router')
     O1_PREVIEW = ('openai/o1-preview', 'openai')
     O1_MINI = ('openai/o1-mini', 'openai')
+    O3_MINI = ('openai/o3-mini-2025-1-31', 'openai')
     GPT_4O = ('openai/gpt-4o-2024-08-06', 'openai')
     GPT_4O_MINI = ('openai/gpt-4o-mini', 'openai')
     GEMINI_FLASH = ('google/gemini-2.0-flash-exp:free', 'open_router')
