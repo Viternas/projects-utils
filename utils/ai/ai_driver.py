@@ -178,13 +178,10 @@ class AIDriver:
                     parsed_content = json.loads(parsed)
                     result = self.parser(**parsed_content)
                     logger.success("Parsing successful.")
-                    print(f'MODEL PARSEd CORRECTLY {self.model}')
-
                     return result, response.usage
                 except:
-                    print(f'MODEL FAILED TO PARSE CORRECTLY {self.model}')
+                    logger.error("Parsing Failed, moving to default.")
                     self.model = Models.O3_MINI.model_id
-                    print(parsed.replace('\n', ""))
                     return self.gpt_parse(prompt=parsed)
             else:
                 logger.warning("No parse response from the API.")
@@ -243,6 +240,7 @@ class AIDriver:
                     logger.success("Parsing successful.")
                     return result, usage
                 except:
+                    logger.error("Parsing Failed, moving to default.")
                     self.model = Models.O3_MINI.model_id
                     return self.gpt_parse(prompt=parsed)
             else:
