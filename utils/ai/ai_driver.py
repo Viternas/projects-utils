@@ -1,5 +1,5 @@
 import os
-
+import json
 from loguru import logger
 from openai import OpenAI, api_key, base_url
 from ollama import Client as OllamaClient
@@ -46,31 +46,6 @@ class AIDriver:
                 content = response.choices[0].message.content
                 logger.success("Response retrieved successfully.")
                 return content, response.usage
-            else:
-                logger.warning("No response from the API.")
-                return "No response from the API."
-        except Exception as e:
-            logger.error(f"An error occurred while chatting with GPT: {e}")
-            return "An error occurred."
-
-    def ollama_chat(self, prompt):
-        logger.info(f"Sending prompt to Ollama: {prompt}")
-        self.set_client(client_provider=ClientProvider.OLLAMA)
-        try:
-            prompt = self.agent_prompt + prompt
-            response = self.client.generate(
-                model=self.model,
-                prompt=prompt
-            )
-            logger.debug(f"Received response: {response}")
-            if response:
-                content = response.response
-                usage = convert_ollama_to_openai_usage(ollama_output=response.dict())
-                logger.success("Response retrieved successfully.")
-                """
-                Need to standard the usage return to be the same type as openai standards
-                """
-                return content, usage
             else:
                 logger.warning("No response from the API.")
                 return "No response from the API."
@@ -186,26 +161,95 @@ class AIDriver:
         self.set_client(ClientProvider.OPEN_ROUTER)
         try:
             response = self.client.beta.chat.completions.parse(
-                model=f'openai/{self.model}',
+                model=f'{self.model}',
                 messages=[
                     {"role": "system", "content": self.agent_prompt},
                     {"role": "user", "content": prompt},
                 ],
-                # max_tokens=1000,
-                temperature=0.2,
-                response_format=self.parser,
+
+                response_format=self.parser.model_json_schema(),
             )
             logger.debug(f"Received parse response: {response}")
-            self.switch_context(gpt=True)
             if response.choices:
-                parsed = response.choices[0].message.parsed
-                logger.success("Parsing successful.")
-                return parsed, response.usage
+                parsed = response.choices[0].message.content
+                try:
+                    parsed = parsed.replace("```json", "")
+                    parsed = parsed.replace("```", "")
+                    parsed_content = json.loads(parsed)
+                    result = self.parser(**parsed_content)
+                    logger.success("Parsing successful.")
+                    print(f'MODEL PARSEd CORRECTLY {self.model}')
+
+                    return result, response.usage
+                except:
+                    print(f'MODEL FAILED TO PARSE CORRECTLY {self.model}')
+                    self.model = Models.O3_MINI.model_id
+                    print(parsed.replace('\n', ""))
+                    return self.gpt_parse(prompt=parsed)
             else:
                 logger.warning("No parse response from the API.")
                 return "No response from the API."
         except Exception as e:
-            logger.error(f"An error occurred while parsing with GPT: {e}")
+            logger.error(f"An error occurred while chatting with GPT: {e}")
+            return "An error occurred."
+
+    def ollama_chat(self, prompt):
+        logger.info(f"Sending prompt to Ollama: {prompt}")
+        self.set_client(client_provider=ClientProvider.OLLAMA)
+        try:
+            response = self.client.chat(
+                messages=[
+                    {"role": "system", "content": self.agent_prompt},
+                    {"role": "user", "content": prompt},
+                ],
+                model=self.model,
+            )
+            logger.debug(f"Received response: {response}")
+            if response:
+                content = response.response
+                usage = convert_ollama_to_openai_usage(ollama_output=response.dict())
+                logger.success("Response retrieved successfully.")
+                """
+                Need to standard the usage return to be the same type as openai standards
+                """
+                return content, usage
+            else:
+                logger.warning("No response from the API.")
+                return "No response from the API."
+        except Exception as e:
+            logger.error(f"An error occurred while chatting with GPT: {e}")
+            return "An error occurred."
+
+    def ollama_parser(self, prompt):
+        self.set_client(ClientProvider.OLLAMA)
+        try:
+            response = self.client.chat(
+                      messages=[
+                          {"role": "system", "content": self.agent_prompt},
+                          {"role": "user", "content": prompt},
+                      ],
+                      model=self.model,
+                      format=self.parser.model_json_schema(),
+                    )
+            logger.debug(f"Received parse response: {response}")
+            if response:
+                parsed = response.message.content
+                usage = convert_ollama_to_openai_usage(ollama_output=response.dict())
+                try:
+                    parsed = parsed.replace("```json", "")
+                    parsed = parsed.replace("```", "")
+                    parsed_content = json.loads(parsed)
+                    result = self.parser(**parsed_content)
+                    logger.success("Parsing successful.")
+                    return result, usage
+                except:
+                    self.model = Models.O3_MINI.model_id
+                    return self.gpt_parse(prompt=parsed)
+            else:
+                logger.warning("No parse response from the API.")
+                return "No response from the API."
+        except Exception as e:
+            logger.error(f"An error occurred while chatting with GPT: {e}")
             return "An error occurred."
 
     def whisper(self, file_path: str) -> tuple[str, dict] | str:
