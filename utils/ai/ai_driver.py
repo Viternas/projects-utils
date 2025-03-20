@@ -194,7 +194,7 @@ class AIDriver:
                 except:
                     logger.error("Parsing Failed, moving to default.")
                     self.model = Models.O3_MINI.model_id
-                    return self.gpt_parse(prompt=parsed)
+                    return self.gpt_parse(prompt=str(parsed))
             else:
                 logger.warning("No parse response from the API.")
                 return "No response from the API."
@@ -254,7 +254,7 @@ class AIDriver:
                 except:
                     logger.error("Parsing Failed, moving to default.")
                     self.model = Models.O3_MINI.model_id
-                    return self.gpt_parse(prompt=parsed)
+                    return self.gpt_parse(prompt=str(parsed))
             else:
                 logger.warning("No parse response from the API.")
                 return "No response from the API."
