@@ -33,7 +33,7 @@ class AIDriver:
                      self.model,
                      self.parser.__class__.__name__ if self.parser else None,
                      len(self.agent_prompt))
-        logger.success("AIDriver initialized successfully")
+        logger.success("AIDriver initialized successfully with model: {}", self.model or "None")
 
     def _truncate_text(self, text: str, max_length: int = 50) -> str:
         """Helper method to truncate text for logging purposes."""
@@ -44,17 +44,17 @@ class AIDriver:
     def _log_prompt(self, prompt: str, provider: str) -> None:
         """Standardized prompt logging with truncation."""
         truncated = self._truncate_text(prompt)
-        logger.info("Sending prompt to {}: {}", provider, truncated)
+        logger.info("Sending prompt to {} using model {}: {}", provider, self.model, truncated)
         logger.debug("Full prompt length: {}", len(prompt))
 
     def _log_response_received(self, response: Any, provider: str) -> None:
         """Log receipt of response with limited information."""
         # Log minimal information at info level
-        logger.info("Received response from {}", provider)
+        logger.info("Received response from {} using model {}", provider, self.model)
         # Log more details at debug level
         if hasattr(response, 'usage'):
-            logger.debug("Response usage stats: {}", response.usage)
-        logger.trace("Full response object: {}", response)  # Use trace for very verbose logs
+            logger.debug("Response usage stats for model {}: {}", self.model, response.usage)
+        logger.trace("Full response object from model {}: {}", self.model, response)  # Use trace for very verbose logs
 
     def _time_operation(self, operation: Callable, operation_name: str) -> Any:
         """Execute an operation with timing information."""
@@ -62,11 +62,11 @@ class AIDriver:
         try:
             result = operation()
             elapsed = time.time() - start_time
-            logger.info("{} completed in {:.2f}s", operation_name, elapsed)
+            logger.info("{} with model {} completed in {:.2f}s", operation_name, self.model, elapsed)
             return result
         except Exception as e:
             elapsed = time.time() - start_time
-            logger.error("{} failed after {:.2f}s: {}", operation_name, elapsed, str(e))
+            logger.error("{} with model {} failed after {:.2f}s: {}", operation_name, self.model, elapsed, str(e))
             raise
 
     def open_ai_chat(self, prompt: str) -> Union[Tuple[str, Dict], str]:
@@ -109,7 +109,7 @@ class AIDriver:
                     messages=response_params,
                 )
                 elapsed = time.time() - start_time
-                logger.info("OpenAI request completed in {:.2f}s", elapsed)
+                logger.info("OpenAI request with model {} completed in {:.2f}s", model_id, elapsed)
 
                 # Log response information
                 self._log_response_received(response, "OpenAI")
@@ -124,14 +124,14 @@ class AIDriver:
                 if response.choices:
                     content = response.choices[0].message.content
                     content_length = len(content) if content else 0
-                    logger.success("Response retrieved successfully (length: {})", content_length)
+                    logger.success("Response from model {} retrieved successfully (length: {})", model_id, content_length)
                     return content, response.usage
                 else:
-                    logger.warning("No choices in OpenAI response")
+                    logger.warning("No choices in OpenAI response for model {}", model_id)
                     return "No response from the API."
             except Exception as e:
                 elapsed = time.time() - start_time if 'start_time' in locals() else -1
-                logger.error("OpenAI request failed after {:.2f}s: {}", elapsed, str(e))
+                logger.error("OpenAI request with model {} failed after {:.2f}s: {}", model_id, elapsed, str(e))
                 raise
 
         return self.execute_with_error_handling(
@@ -147,7 +147,7 @@ class AIDriver:
             return check_initial_result
 
         if not self.parser:
-            logger.error('Parser not configured for GPT parsing operation')
+            logger.error('Parser not configured for GPT parsing operation with model {}', self.model)
             return False
 
         # Set client
@@ -156,8 +156,8 @@ class AIDriver:
         def perform_gpt_parse_operation():
             # Log prompt information
             truncated = self._truncate_text(prompt)
-            logger.info("Parsing prompt with GPT: {}", truncated)
-            logger.debug("Using parser: {}", self.parser.__name__)
+            logger.info("Parsing prompt with GPT model {}: {}", self.model, truncated)
+            logger.debug("Using parser: {} with model {}", self.parser.__name__, self.model)
 
             # Prepare request parameters
             self.agent_prompt = str(self.agent_prompt)
@@ -187,11 +187,11 @@ class AIDriver:
                     response_format=self.parser
                 )
                 elapsed = time.time() - start_time
-                logger.info("GPT parse completed in {:.2f}s", elapsed)
+                logger.info("GPT parse with model {} completed in {:.2f}s", model_id, elapsed)
 
                 # Log response information
-                logger.debug("Parse response received")
-                logger.trace("Full parse response: {}", response)
+                logger.debug("Parse response received from model {}", model_id)
+                logger.trace("Full parse response from model {}: {}", model_id, response)
 
                 # Check response validity
                 check_response_result = self.check_response(response=response,
@@ -202,14 +202,14 @@ class AIDriver:
                 # Process response
                 if response.choices:
                     parsed = response.choices[0].message.parsed
-                    logger.success("Parsing successful with schema: {}", self.parser.__name__)
+                    logger.success("Parsing with model {} successful using schema: {}", model_id, self.parser.__name__)
                     return parsed, response.usage
                 else:
-                    logger.warning("No parse choices in OpenAI response")
+                    logger.warning("No parse choices in OpenAI response for model {}", model_id)
                     return "No response from the API."
             except Exception as e:
                 elapsed = time.time() - start_time if 'start_time' in locals() else -1
-                logger.error("GPT parse failed after {:.2f}s: {}", elapsed, str(e))
+                logger.error("GPT parse with model {} failed after {:.2f}s: {}", model_id, elapsed, str(e))
                 raise
 
         return self.execute_with_error_handling(
@@ -251,7 +251,7 @@ class AIDriver:
                     temperature=0.1,
                 )
                 elapsed = time.time() - start_time
-                logger.info("OpenRouter request completed in {:.2f}s", elapsed)
+                logger.info("OpenRouter request with model {} completed in {:.2f}s", self.model, elapsed)
 
                 # Log response information
                 self._log_response_received(response, "OpenRouter")
@@ -267,15 +267,15 @@ class AIDriver:
                 usage_stats = getattr(response, 'usage', {})
 
                 if not content:
-                    logger.warning("Empty content in OpenRouter response")
+                    logger.warning("Empty content in OpenRouter response for model {}", self.model)
                     return "Empty content in response."
 
                 content_length = len(content) if content else 0
-                logger.success("OpenRouter response retrieved successfully (length: {})", content_length)
+                logger.success("OpenRouter response for model {} retrieved successfully (length: {})", self.model, content_length)
                 return content, usage_stats
             except Exception as e:
                 elapsed = time.time() - start_time if 'start_time' in locals() else -1
-                logger.error("OpenRouter request failed after {:.2f}s: {}", elapsed, str(e))
+                logger.error("OpenRouter request with model {} failed after {:.2f}s: {}", self.model, elapsed, str(e))
                 raise
 
         return self.execute_with_error_handling(
@@ -296,8 +296,8 @@ class AIDriver:
         def perform_parse_operation():
             # Log prompt information
             truncated = self._truncate_text(prompt)
-            logger.info("Parsing prompt with OpenRouter: {}", truncated)
-            logger.debug("Using parser: {}", self.parser.__name__)
+            logger.info("Parsing prompt with OpenRouter model {}: {}", self.model, truncated)
+            logger.debug("Using parser: {} with model {}", self.parser.__name__, self.model)
 
             # Prepare request parameters
             self.agent_prompt = str(self.agent_prompt)
@@ -315,11 +315,11 @@ class AIDriver:
                     response_format=self.parser.model_json_schema(),
                 )
                 elapsed = time.time() - start_time
-                logger.info("OpenRouter parse completed in {:.2f}s", elapsed)
+                logger.info("OpenRouter parse with model {} completed in {:.2f}s", self.model, elapsed)
 
                 # Log response information
-                logger.debug("Parse response received from OpenRouter")
-                logger.trace("Full parse response: {}", response)
+                logger.debug("Parse response received from OpenRouter model {}", self.model)
+                logger.trace("Full parse response from model {}: {}", self.model, response)
 
                 # Check response validity
                 check_response_result = self.check_response(response=response,
@@ -334,17 +334,19 @@ class AIDriver:
                     parsed = parsed.replace("```", "")
                     parsed_content = json.loads(parsed)
                     result = self.parser(**parsed_content)
-                    logger.success("OpenRouter parsing successful with schema: {}", self.parser.__name__)
+                    logger.success("OpenRouter parsing with model {} successful using schema: {}", self.model, self.parser.__name__)
                     return result, response.usage
                 except Exception as parse_error:
-                    logger.error("OpenRouter parsing failed, falling back to default model: {}", parse_error)
-                    logger.debug("Failed parse content: {}", self._truncate_text(str(parsed), 100))
+                    logger.error("OpenRouter parsing with model {} failed, falling back to default model: {}", self.model, parse_error)
+                    logger.debug("Failed parse content from model {}: {}", self.model, self._truncate_text(str(parsed), 100))
                     # Fallback to default model
+                    original_model = self.model
                     self.model = Models.O3_MINI.model_id
+                    logger.info("Falling back from model {} to {}", original_model, self.model)
                     return self.gpt_parse(prompt=str(parsed))
             except Exception as e:
                 elapsed = time.time() - start_time if 'start_time' in locals() else -1
-                logger.error("OpenRouter parse failed after {:.2f}s: {}", elapsed, str(e))
+                logger.error("OpenRouter parse with model {} failed after {:.2f}s: {}", self.model, elapsed, str(e))
                 raise
 
         return self.execute_with_error_handling(
@@ -381,27 +383,27 @@ class AIDriver:
                     model=self.model,
                 )
                 elapsed = time.time() - start_time
-                logger.info("Ollama request completed in {:.2f}s", elapsed)
+                logger.info("Ollama request with model {} completed in {:.2f}s", self.model, elapsed)
 
                 # Log response information
-                logger.info("Received response from Ollama")
-                logger.trace("Full Ollama response: {}", response)
+                logger.info("Received response from Ollama model {}", self.model)
+                logger.trace("Full Ollama response from model {}: {}", self.model, response)
 
                 # Process response
                 if not response:
-                    logger.warning("No response from Ollama API")
+                    logger.warning("No response from Ollama API for model {}", self.model)
                     return "No response from the API."
 
                 content = response.response
                 usage = convert_ollama_to_openai_usage(ollama_output=response.dict())
-                logger.debug("Ollama usage stats: {}", usage)
+                logger.debug("Ollama usage stats for model {}: {}", self.model, usage)
 
                 content_length = len(content) if content else 0
-                logger.success("Ollama response retrieved successfully (length: {})", content_length)
+                logger.success("Ollama response for model {} retrieved successfully (length: {})", self.model, content_length)
                 return content, usage
             except Exception as e:
                 elapsed = time.time() - start_time if 'start_time' in locals() else -1
-                logger.error("Ollama request failed after {:.2f}s: {}", elapsed, str(e))
+                logger.error("Ollama request with model {} failed after {:.2f}s: {}", self.model, elapsed, str(e))
                 raise
 
         return self.execute_with_error_handling(
@@ -422,8 +424,8 @@ class AIDriver:
         def perform_ollama_parser_operation():
             # Log prompt information
             truncated = self._truncate_text(prompt)
-            logger.info("Parsing prompt with Ollama: {}", truncated)
-            logger.debug("Using parser: {}", self.parser.__name__)
+            logger.info("Parsing prompt with Ollama model {}: {}", self.model, truncated)
+            logger.debug("Using parser: {} with model {}", self.parser.__name__, self.model)
 
             # Execute request with timing
             try:
@@ -437,37 +439,39 @@ class AIDriver:
                     format=self.parser.model_json_schema(),
                 )
                 elapsed = time.time() - start_time
-                logger.info("Ollama parse completed in {:.2f}s", elapsed)
+                logger.info("Ollama parse with model {} completed in {:.2f}s", self.model, elapsed)
 
                 # Log response information
-                logger.debug("Parse response received from Ollama")
-                logger.trace("Full Ollama parse response: {}", response)
+                logger.debug("Parse response received from Ollama model {}", self.model)
+                logger.trace("Full Ollama parse response from model {}: {}", self.model, response)
 
                 # Process response
                 if not response:
-                    logger.warning("No parse response from Ollama API")
+                    logger.warning("No parse response from Ollama API for model {}", self.model)
                     return "No response from the API."
 
                 parsed = response.message.content
                 usage = convert_ollama_to_openai_usage(ollama_output=response.dict())
-                logger.debug("Ollama usage stats: {}", usage)
+                logger.debug("Ollama usage stats for model {}: {}", self.model, usage)
 
                 try:
                     parsed = parsed.replace("```json", "")
                     parsed = parsed.replace("```", "")
                     parsed_content = json.loads(parsed)
                     result = self.parser(**parsed_content)
-                    logger.success("Ollama parsing successful with schema: {}", self.parser.__name__)
+                    logger.success("Ollama parsing with model {} successful using schema: {}", self.model, self.parser.__name__)
                     return result, usage
                 except Exception as parse_error:
-                    logger.error("Ollama parsing failed, falling back to default model: {}", parse_error)
-                    logger.debug("Failed parse content: {}", self._truncate_text(str(parsed), 100))
+                    logger.error("Ollama parsing with model {} failed, falling back to default model: {}", self.model, parse_error)
+                    logger.debug("Failed parse content from model {}: {}", self.model, self._truncate_text(str(parsed), 100))
                     # Fallback to default model
+                    original_model = self.model
                     self.model = Models.O3_MINI.model_id
+                    logger.info("Falling back from model {} to {}", original_model, self.model)
                     return self.gpt_parse(prompt=str(parsed))
             except Exception as e:
                 elapsed = time.time() - start_time if 'start_time' in locals() else -1
-                logger.error("Ollama parse failed after {:.2f}s: {}", elapsed, str(e))
+                logger.error("Ollama parse with model {} failed after {:.2f}s: {}", self.model, elapsed, str(e))
                 raise
 
         return self.execute_with_error_handling(
@@ -490,7 +494,7 @@ class AIDriver:
             tuple[str, dict]: Tuple containing transcription text and usage stats
             str: Error message if transcription fails
         """
-        logger.info("Transcribing audio file: {}", file_path)
+        logger.info("Transcribing audio file: {} with Whisper model", file_path)
 
         # Set client
         self.set_client(client_provider=ClientProvider.OPEN_AI)
@@ -520,13 +524,13 @@ class AIDriver:
             logger.info("Whisper transcription completed in {:.2f}s for {:.2f}MB file", elapsed, file_size)
 
             # Log response information
-            logger.debug("Transcription response received")
-            logger.trace("Full transcription response: {}", transcription)
+            logger.debug("Transcription response received from Whisper model")
+            logger.trace("Full transcription response from Whisper model: {}", transcription)
 
             # Process response
             if hasattr(transcription, 'text'):
                 text_length = len(transcription.text) if transcription.text else 0
-                logger.success("Transcription completed successfully (length: {})", text_length)
+                logger.success("Whisper transcription completed successfully (length: {})", text_length)
                 return transcription.text, getattr(transcription, 'usage', {})
             else:
                 logger.warning("No transcription text in Whisper response")
@@ -534,14 +538,14 @@ class AIDriver:
 
         except Exception as e:
             elapsed = time.time() - start_time if 'start_time' in locals() else -1
-            logger.error("Transcription failed after {:.2f}s: {}", elapsed, str(e))
+            logger.error("Whisper transcription failed after {:.2f}s: {}", elapsed, str(e))
             return f"An error occurred during transcription: {str(e)}"
 
     def embeddings(self, prompt: str) -> Union[Tuple[Any, Dict], str]:
         """Generate embeddings for the given prompt."""
         # Log prompt information
         truncated = self._truncate_text(prompt)
-        logger.info("Generating embeddings: {}", truncated)
+        logger.info("Generating embeddings with model {}: {}", self.model, truncated)
 
         # Set client
         self.set_client(ClientProvider.OPEN_AI)
@@ -554,24 +558,24 @@ class AIDriver:
                 input=prompt
             )
             elapsed = time.time() - start_time
-            logger.info("Embeddings generation completed in {:.2f}s", elapsed)
+            logger.info("Embeddings generation with model {} completed in {:.2f}s", self.model, elapsed)
 
             # Log response information
-            logger.debug("Embeddings response received")
-            logger.trace("Full embeddings response: {}", response)
+            logger.debug("Embeddings response received from model {}", self.model)
+            logger.trace("Full embeddings response from model {}: {}", self.model, response)
 
             # Process response
             if response.data:
                 embedding = response.data[0].embedding
                 embedding_size = len(embedding)
-                logger.success("Embeddings generated successfully (dimensions: {})", embedding_size)
+                logger.success("Embeddings with model {} generated successfully (dimensions: {})", self.model, embedding_size)
                 return embedding, response.usage
             else:
-                logger.warning("No data in embeddings response")
+                logger.warning("No data in embeddings response from model {}", self.model)
                 return "No response from the API."
         except Exception as e:
             elapsed = time.time() - start_time if 'start_time' in locals() else -1
-            logger.error("Embeddings generation failed after {:.2f}s: {}", elapsed, str(e))
+            logger.error("Embeddings generation with model {} failed after {:.2f}s: {}", self.model, elapsed, str(e))
             return f"An error occurred: {str(e)}"
 
     """
@@ -592,27 +596,27 @@ class AIDriver:
                 host=ClientProviderEndpoints.OLLAMA.value)
         }
 
-        logger.info("Setting client to {}", client_provider)
+        logger.info("Setting client to {} for model {}", client_provider, self.model)
 
         client_factory = client_mapper.get(client_provider)
         if client_factory is None:
-            error_msg = f"Unsupported client provider: {client_provider}"
+            error_msg = f"Unsupported client provider: {client_provider} for model {self.model}"
             logger.error(error_msg)
             raise ValueError(error_msg)
 
         self.client = client_factory()
-        logger.success("Client successfully set to {}", client_provider)
+        logger.success("Client successfully set to {} for model {}", client_provider, self.model)
 
     def check_initial(self, prompt: Any, client_provider: ClientProvider) -> Union[bool, str]:
         """Check initial conditions before sending request."""
         # Check prompt type
         if not isinstance(prompt, str):
-            logger.error("Invalid prompt type: {}. Expected str.", type(prompt).__name__)
+            logger.error("Invalid prompt type: {} for model {}. Expected str.", type(prompt).__name__, self.model)
             return "Invalid prompt type. Expected string."
 
         # Check prompt content
         if not prompt.strip():
-            logger.warning("Empty prompt received")
+            logger.warning("Empty prompt received for model {}", self.model)
             return "Empty prompt received."
 
         # Check model
@@ -620,27 +624,27 @@ class AIDriver:
             logger.error("No model specified for {} request", client_provider)
             return "No model specified."
 
-        logger.debug("Initial checks passed for {} request", client_provider)
+        logger.debug("Initial checks passed for {} request with model {}", client_provider, self.model)
         return True
 
     def check_response(self, response: Any, client_provider: ClientProvider) -> Union[bool, str]:
         """Check response validity."""
         # Check response existence
         if not response:
-            logger.error("Received empty response from {}", client_provider)
+            logger.error("Received empty response from {} for model {}", client_provider, self.model)
             return "Empty response received from API."
 
         # Check response format
         if not hasattr(response, 'choices'):
-            logger.error("Invalid response format from {}: missing 'choices' attribute", client_provider)
+            logger.error("Invalid response format from {} for model {}: missing 'choices' attribute", client_provider, self.model)
             return "Invalid response format from API."
 
         # Check choices content
         if not response.choices:
-            logger.warning("No choices in response from {}", client_provider)
+            logger.warning("No choices in response from {} for model {}", client_provider, self.model)
             return "No response choices available."
 
-        logger.debug("Response checks passed for {} response", client_provider)
+        logger.debug("Response checks passed for {} response with model {}", client_provider, self.model)
         return True
 
     def execute_with_error_handling(self, operation_func: Callable, client_provider: str) -> Any:
@@ -657,14 +661,17 @@ class AIDriver:
         try:
             return operation_func()
         except ConnectionError as e:
-            logger.error("Connection error while calling {}: {}", client_provider, str(e))
+            logger.error("Connection error while calling {} with model {}: {}",
+                         client_provider, self.model, str(e))
             return f"Connection error: {str(e)}"
         except TimeoutError as e:
-            logger.error("Timeout while calling {}: {}", client_provider, str(e))
+            logger.error("Timeout while calling {} with model {}: {}",
+                         client_provider, self.model, str(e))
             return f"Request timed out: {str(e)}"
         except Exception as e:
-            logger.error("Error during {} operation: {}", client_provider, str(e))
-            logger.exception("Full exception details")  # This logs the stack trace
+            logger.error("Error during {} operation with model {}: {}",
+                         client_provider, self.model, str(e))
+            logger.exception("Full exception details for model {}".format(self.model))  # This logs the stack trace
             return f"An error occurred: {str(e)}"
 
 
