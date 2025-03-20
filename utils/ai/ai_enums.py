@@ -18,6 +18,7 @@ class Models(Enum):
     GEMINI_FLASH_2 = ('google/gemini-2.0-flash-001', 'open_router')
     MINMAX = ('minimax/minimax-01', 'open_router')
     PHI4 = ("microsoft/phi-4", 'open_router')
+    O3_MINI_HIGH = ("openai/o3-mini-high", 'open_router')
 
     O1 = ('openai/o1-2024-12-17', 'open_ai')
     O1_MINI = ('openai/o1-mini', 'open_ai')
