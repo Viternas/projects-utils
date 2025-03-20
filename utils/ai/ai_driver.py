@@ -65,7 +65,6 @@ class AIDriver:
             logger.error('No parser set')
             return False
         try:
-            self.model = self.model.split('/')[1]
             logger.info(f"Parsing prompt with GPT: {prompt[:30]}")
             response_params = {
                 {"role": "system", "content": self.agent_prompt},
