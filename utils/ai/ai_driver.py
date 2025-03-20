@@ -29,10 +29,7 @@ class AIDriver:
         self.client = None
 
         # Log configuration details without sensitive information
-        logger.debug("AIDriver configuration: model={}, parser={}, agent_prompt_length={}",
-                     self.model,
-                     self.parser.__class__.__name__ if self.parser else None,
-                     len(self.agent_prompt))
+        logger.debug("AIDriver configuration: model={}, parser={}, agent_prompt_length={}",self.model, self.parser.__class__.__name__ if self.parser else None, len(self.agent_prompt))
         logger.success("AIDriver initialized successfully with model: {}", self.model or "None")
 
     def _truncate_text(self, text: str, max_length: int = 50) -> str:
