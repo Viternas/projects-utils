@@ -31,13 +31,19 @@ class AIDriver:
         logger.info(f"Sending prompt to GPT: {prompt}")
         self.set_client(client_provider=ClientProvider.OPEN_AI)
         try:
-            self.model = self.model.split('/')[1] # open_ai does not take the model prefix in the string
+            response_params = {
+                {"role": "system", "content": self.agent_prompt},
+                {"role": "user", "content": prompt},
+            }
+            system_not_supported = [Models.O1_MINI.model_id]
+            if self.model in system_not_supported:
+                response_params = {
+                    {"role": "user", "content": self.agent_prompt + prompt},
+                }
+            self.model = self.model.split('/')[1]
             response = self.client.chat.completions.create(
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": self.agent_prompt},
-                    {"role": "user", "content": prompt},
-                ],
+                messages=response_params,
                 # max_tokens=10000,
                 #temperature=0.2,
             )
@@ -61,15 +67,22 @@ class AIDriver:
         try:
             self.model = self.model.split('/')[1]
             logger.info(f"Parsing prompt with GPT: {prompt[:30]}")
-            response = self.client.beta.chat.completions.parse(
+            response_params = {
+                {"role": "system", "content": self.agent_prompt},
+                {"role": "user", "content": prompt},
+            }
+            system_not_supported = [Models.O1_MINI.model_id]
+            if self.model in system_not_supported:
+                response_params = {
+                    {"role": "user", "content": self.agent_prompt + prompt},
+                }
+            self.model = self.model.split('/')[1]
+            response = self.client.chat.completions.create(
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": self.agent_prompt},
-                    {"role": "user", "content": prompt},
-                ],
+                messages=[response_params],
+                respone_format=self.parser
                 # max_tokens=10000,
-                #temperature=0.2,
-                response_format=self.parser,
+                # temperature=0.2,
             )
             logger.debug(f"Received parse response: {response}")
             if response.choices:
