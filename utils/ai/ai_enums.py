@@ -64,6 +64,14 @@ class Models(Enum):
         """Return a list of all enum member names -- """
         return [model.name for model in cls]
 
+    @classmethod
+    def get_provider_by_name(cls, name):
+        """Return the provider for a given model name"""
+        try:
+            return cls[name].provider
+        except KeyError:
+            return None
+
 
 class ClientProvider(Enum):
     OPEN_AI = 'open_ai'
