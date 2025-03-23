@@ -72,6 +72,14 @@ class Models(Enum):
         except KeyError:
             return None
 
+    @classmethod
+    def get_model_id_by_name(cls, name):
+        """Return the model ID for a given model name"""
+        try:
+            return cls[name].model_id
+        except KeyError:
+            return None
+
 
 class ClientProvider(Enum):
     OPEN_AI = 'open_ai'
