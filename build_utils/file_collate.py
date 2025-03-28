@@ -50,8 +50,6 @@ if __name__ == "__main__":
         'venv',
         '__pycache__',
         '.git',
-        'ThreadFactory',
-        'SPECIALITY',
         'project_utils.egg-info',
         'projects-utils',
         '.venv']
