@@ -1,4 +1,5 @@
 import os
+import pathlib
 
 
 def find_unique_py_files(start_dir, exclude_folders=None):
@@ -42,8 +43,8 @@ def write_files_to_text(py_files, output_file):
 
 
 if __name__ == "__main__":
-    start_directory = '../../'
-    output_text_file = 'utils.txt'
+    _path = pathlib.Path(__file__).parent.parent.parent
+    _name = f"{str(os.path.basename(_path).lower())}.txt"
 
     folders_to_exclude = [
         'venv',
@@ -52,14 +53,15 @@ if __name__ == "__main__":
         'ThreadFactory',
         'SPECIALITY',
         'project_utils.egg-info',
+        'projects-utils',
         '.venv']
 
     unique_python_files = find_unique_py_files(
-        start_directory, folders_to_exclude)
+        _path, folders_to_exclude)
 
     for item in unique_python_files:
         print(item)
 
-    write_files_to_text(unique_python_files, output_text_file)
+    write_files_to_text(unique_python_files, _name)
 
-    print(f"All unique Python files have been written to {output_text_file}.")
+    print(f"All unique Python files have been written to {_name}.")
